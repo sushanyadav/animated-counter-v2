@@ -1,7 +1,7 @@
-import './App.css';
+import "./App.css";
 
-import { useState } from 'react';
-import { AnimatedCounter } from './AnimatedCounter';
+import { useState } from "react";
+import { AnimatedCounter } from "./AnimatedCounter";
 
 function App() {
   const [count, setCount] = useState(4291);
@@ -33,7 +33,7 @@ function App() {
               className="bg-[#0a0a0a] rounded-md h-10 px-5 text-base focus:ring focus:ring-gray-500/20 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               value={count}
               onKeyDown={(evt) =>
-                ['e', 'E', '+', '-', '.'].includes(evt.key) &&
+                ["e", "E", "+", "-", "."].includes(evt.key) &&
                 evt.preventDefault()
               }
               onChange={(e) => setCount(e.target.value)}
@@ -41,7 +41,7 @@ function App() {
           </label>
         </div>
         <div className="flex gap-10 items-center">
-          <label htmlFor="format" className="flex gap-2">
+          <label htmlFor="format" className="flex items-center gap-2">
             <input
               type="checkbox"
               id="format"
