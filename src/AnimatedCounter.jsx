@@ -34,6 +34,7 @@ const Digit = ({
   debug,
   isFormatted,
   valueRoundedToPlace,
+  isNegative,
 }) => {
   const [scope, animate] = useAnimate();
 
@@ -73,12 +74,22 @@ const Digit = ({
     const prev = Math.round(_prev);
     const diff = valueRoundedToPlace - prev;
 
-    if (diff < 0 && isIncreasing) {
-      animatedValue.jump(0 - 1);
-    }
+    if (isNegative) {
+      if (diff < 0 && isDecreasing) {
+        animatedValue.jump(0 - 1);
+      }
 
-    if (diff > 0 && isDecreasing) {
-      animatedValue.jump(9 + 1);
+      if (diff > 0 && isIncreasing) {
+        animatedValue.jump(9 + 1);
+      }
+    } else {
+      if (diff < 0 && isIncreasing) {
+        animatedValue.jump(0 - 1);
+      }
+
+      if (diff > 0 && isDecreasing) {
+        animatedValue.jump(9 + 1);
+      }
     }
   }, [
     animatedValue,
@@ -86,6 +97,7 @@ const Digit = ({
     isFormatted,
     isDecreasing,
     isIncreasing,
+    isNegative,
     valueRoundedToPlace,
   ]);
 
@@ -161,6 +173,7 @@ export const AnimatedCounter = ({
             key={index}
             isFormatted={isFormatted}
             isIncreasing={isIncreasing}
+            isNegative={number < 0}
             isDecreasing={isDecreasing}
             debug={index === numArray.length - 1} // just for console logs (logging last column)
             height={height}
