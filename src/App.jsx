@@ -32,10 +32,16 @@ function App() {
               id="input-num"
               className="bg-[#0a0a0a] rounded-md h-10 px-5 text-base focus:ring focus:ring-gray-500/20 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               value={count}
-              onKeyDown={(evt) =>
-                ["e", "E", "+", "-", "."].includes(evt.key) &&
-                evt.preventDefault()
-              }
+              onKeyDown={(evt) => {
+                const isNumber = /[0-9]/.test(evt.key);
+                const isMetaKey = evt.metaKey || evt.ctrlKey;
+                const backSpace = evt.key === "Backspace";
+                const isArrowKey = evt.key.includes("Arrow");
+
+                if (!isNumber && !isMetaKey && !isArrowKey && !backSpace) {
+                  evt.preventDefault();
+                }
+              }}
               onChange={(e) => setCount(e.target.value)}
             />
           </label>

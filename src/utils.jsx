@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from "react";
 
 function intlFormat(num) {
   return new Intl.NumberFormat().format(Math.round(num * 10) / 10);
@@ -12,8 +12,8 @@ export function isNumeric(str) {
 }
 
 export function makeFriendly(num) {
-  if (num >= 1000000) return (num / 1000000).toFixed(2) + 'M';
-  if (num >= 1000) return intlFormat(num / 1000) + 'k';
+  if (num >= 1000000) return (num / 1000000).toFixed(2) + "M";
+  if (num >= 1000) return intlFormat(num / 1000) + "k";
   return intlFormat(num);
 }
 
