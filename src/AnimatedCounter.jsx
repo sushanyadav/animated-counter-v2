@@ -124,10 +124,16 @@ export const AnimatedCounter = ({
 
   const height = fontSize + padding;
 
+  const isNegative = number < 0;
+
+  const positiveNumber = isNegative ? number * -1 : number;
+
   const numArray = isFormatted
-    ? number < 9999
+    ? positiveNumber < 9999
       ? new Intl.NumberFormat().format(number).split("")
-      : makeFriendly(number).split("")
+      : isNegative
+      ? ["-", ...makeFriendly(positiveNumber).split("")]
+      : makeFriendly(positiveNumber).split("")
     : number.toString().split("");
 
   const isIncreasing = prevNum ? prevNum < number : false;
@@ -173,7 +179,7 @@ export const AnimatedCounter = ({
             key={index}
             isFormatted={isFormatted}
             isIncreasing={isIncreasing}
-            isNegative={number < 0}
+            isNegative={isNegative}
             isDecreasing={isDecreasing}
             debug={index === numArray.length - 1} // just for console logs (logging last column)
             height={height}
