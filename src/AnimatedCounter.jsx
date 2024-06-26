@@ -1,15 +1,13 @@
-import { useSpring, useAnimate, useTransform, motion } from 'framer-motion';
-import { useEffect, useRef } from 'react';
-import { isNumeric, makeFriendly } from './utils';
+import { useSpring, useAnimate, useTransform, motion } from "framer-motion";
+import { useEffect } from "react";
+import { isNumeric, makeFriendly, usePrevious } from "./utils";
 
 // TO PREVENT BLUR ANIMATION ON WINDOW LOAD
 let initalAnimate = false;
 
-const Number = ({ mv, height, number, debug }) => {
+const Number = ({ mv, height, number }) => {
   let y = useTransform(mv, (latest) => {
     const b = latest % 10;
-
-    if (debug) console.log(b, 'b', number, 'number');
 
     const offset = (10 + number - b) % 10;
     let memo = offset * height;
@@ -29,7 +27,13 @@ const Number = ({ mv, height, number, debug }) => {
   );
 };
 
-const Digit = ({ height, debug, valueRoundedToPlace }) => {
+const Digit = ({
+  height,
+  isIncreasing,
+  isDecreasing,
+  debug,
+  valueRoundedToPlace,
+}) => {
   const [scope, animate] = useAnimate();
 
   let animatedValue = useSpring(valueRoundedToPlace, {
@@ -43,9 +47,9 @@ const Digit = ({ height, debug, valueRoundedToPlace }) => {
     }
 
     animate(
-      '.number',
+      ".number",
       {
-        filter: ['blur(4.5px)', 'blur(0px)'],
+        filter: ["blur(4.5px)", "blur(0px)"],
         scale: [0.6, 1],
       },
       {
@@ -58,7 +62,22 @@ const Digit = ({ height, debug, valueRoundedToPlace }) => {
 
   useEffect(() => {
     animatedValue.set(valueRoundedToPlace);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [animatedValue, valueRoundedToPlace]);
+
+  useEffect(() => {
+    const _prev = animatedValue.getPrevious();
+    const prev = Math.round(_prev);
+    const diff = valueRoundedToPlace - prev;
+
+    if (diff < 0 && isIncreasing) {
+      animatedValue.jump(0 - 1);
+    }
+
+    if (diff > 0 && isDecreasing) {
+      animatedValue.jump(9 + 1);
+    }
+  }, [animatedValue, debug, isDecreasing, isIncreasing, valueRoundedToPlace]);
 
   return (
     <div
@@ -67,13 +86,7 @@ const Digit = ({ height, debug, valueRoundedToPlace }) => {
       className="relative w-[1ch] tabular-nums"
     >
       {Array.from({ length: 10 }, (_, i) => i).map((i) => (
-        <Number
-          debug={debug}
-          height={height}
-          key={i}
-          mv={animatedValue}
-          number={i}
-        />
+        <Number height={height} key={i} mv={animatedValue} number={i} />
       ))}
     </div>
   );
@@ -85,20 +98,25 @@ export const AnimatedCounter = ({
   fontSize = 16,
   padding = 12,
 }) => {
+  const prevNum = usePrevious(number);
+
   const height = fontSize + padding;
 
   const numArray = isFormatted
     ? number < 9999
-      ? new Intl.NumberFormat().format(number).split('')
-      : makeFriendly(number).split('')
-    : number.toString().split('');
+      ? new Intl.NumberFormat().format(number).split("")
+      : makeFriendly(number).split("")
+    : number.toString().split("");
+
+  const isIncreasing = prevNum ? prevNum < number : false;
+  const isDecreasing = prevNum ? prevNum > number : false;
 
   return (
     <motion.span
       layout="position"
       transition={{
         layout: {
-          type: 'spring',
+          type: "spring",
           damping: 20,
           stiffness: 200,
         },
@@ -106,7 +124,7 @@ export const AnimatedCounter = ({
       style={{
         fontSize: `${fontSize}px`,
         height: `${height + padding}px`,
-        overflow: 'hidden',
+        overflow: "hidden",
         WebkitMaskImage: `linear-gradient(to bottom, transparent, black 30%, black calc(100% - 30%), transparent)`,
         maskImage: `linear-gradient(to bottom, transparent, black 30%, black calc(100% - 30%), transparent)`,
       }}
@@ -131,6 +149,8 @@ export const AnimatedCounter = ({
         return (
           <Digit
             key={index}
+            isIncreasing={isIncreasing}
+            isDecreasing={isDecreasing}
             debug={index === numArray.length - 1} // just for console logs (logging last column)
             height={height}
             valueRoundedToPlace={valueRoundedToPlace}
