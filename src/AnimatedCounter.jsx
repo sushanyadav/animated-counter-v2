@@ -32,12 +32,14 @@ const Digit = ({
   isIncreasing,
   isDecreasing,
   debug,
+  isFormatted,
   valueRoundedToPlace,
 }) => {
   const [scope, animate] = useAnimate();
 
   let animatedValue = useSpring(valueRoundedToPlace, {
-    bounce: 0,
+    stiffness: 200,
+    damping: 30,
   });
 
   useEffect(() => {
@@ -66,6 +68,7 @@ const Digit = ({
   }, [animatedValue, valueRoundedToPlace]);
 
   useEffect(() => {
+    // if (!isFormatted) return;
     const _prev = animatedValue.getPrevious();
     const prev = Math.round(_prev);
     const diff = valueRoundedToPlace - prev;
@@ -77,7 +80,14 @@ const Digit = ({
     if (diff > 0 && isDecreasing) {
       animatedValue.jump(9 + 1);
     }
-  }, [animatedValue, debug, isDecreasing, isIncreasing, valueRoundedToPlace]);
+  }, [
+    animatedValue,
+    debug,
+    isFormatted,
+    isDecreasing,
+    isIncreasing,
+    valueRoundedToPlace,
+  ]);
 
   return (
     <div
@@ -149,6 +159,7 @@ export const AnimatedCounter = ({
         return (
           <Digit
             key={index}
+            isFormatted={isFormatted}
             isIncreasing={isIncreasing}
             isDecreasing={isDecreasing}
             debug={index === numArray.length - 1} // just for console logs (logging last column)
