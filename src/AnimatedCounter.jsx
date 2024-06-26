@@ -172,7 +172,7 @@ export const AnimatedCounter = ({
 
         const valueRoundedToPlace = isFormatted
           ? digit
-          : Math.floor(number / place);
+          : Math.floor(positiveNumber / place);
 
         return (
           <Digit
