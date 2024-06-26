@@ -68,7 +68,7 @@ const Digit = ({
   }, [animatedValue, valueRoundedToPlace]);
 
   useEffect(() => {
-    // if (!isFormatted) return;
+    if (!isFormatted) return;
     const _prev = animatedValue.getPrevious();
     const prev = Math.round(_prev);
     const diff = valueRoundedToPlace - prev;
