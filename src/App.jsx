@@ -30,6 +30,7 @@ function App() {
             <input
               type="number"
               id="input-num"
+              inputMode="numeric"
               className="bg-[#0a0a0a] rounded-md h-10 px-5 text-base focus:ring focus:ring-gray-500/20 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               value={count}
               onKeyDown={(evt) => {
