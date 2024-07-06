@@ -74,6 +74,20 @@ function App() {
         </div>
         <div className="flex gap-10 items-center">
           <button
+            onClick={() => setCount((prev) => Number(prev) + 5)}
+            className="mr-2 border-b border-gray-300"
+          >
+            Increase + 5
+          </button>
+          <button
+            className="border-b border-gray-300"
+            onClick={() => setCount((prev) => Number(prev) - 5)}
+          >
+            Decrease + 5
+          </button>
+        </div>
+        <div className="flex gap-10 items-center">
+          <button
             onClick={() => setCount((prev) => Number(prev) + 124)}
             className="mr-2 border-b border-gray-300"
           >

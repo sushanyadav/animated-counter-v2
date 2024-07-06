@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { isNumeric, makeFriendly, usePrevious } from "./utils";
 
 // TO PREVENT BLUR ANIMATION ON WINDOW LOAD
-let initalAnimate = false;
+let initialAnimate = false;
 
 const Number = ({ mv, height, number }) => {
   let y = useTransform(mv, (latest) => {
@@ -44,8 +44,8 @@ const Digit = ({
   });
 
   useEffect(() => {
-    if (!initalAnimate) {
-      setTimeout(() => (initalAnimate = true), 0);
+    if (!initialAnimate) {
+      setTimeout(() => (initialAnimate = true), 0);
       return;
     }
 
@@ -74,22 +74,26 @@ const Digit = ({
     const prev = Math.round(_prev);
     const diff = valueRoundedToPlace - prev;
 
+    const increasingVal = diff * -1 - 10;
+    const decreasingVal = 10;
+
     if (isNegative) {
       if (diff < 0 && isDecreasing) {
-        animatedValue.jump(0 - 1);
+        animatedValue.jump(increasingVal);
       }
 
       if (diff > 0 && isIncreasing) {
-        animatedValue.jump(9 + 1);
+        animatedValue.jump(decreasingVal);
       }
-    } else {
-      if (diff < 0 && isIncreasing) {
-        animatedValue.jump(0 - 1);
-      }
+      return;
+    }
 
-      if (diff > 0 && isDecreasing) {
-        animatedValue.jump(9 + 1);
-      }
+    if (diff < 0 && isIncreasing) {
+      animatedValue.jump(increasingVal);
+    }
+
+    if (diff > 0 && isDecreasing) {
+      animatedValue.jump(decreasingVal);
     }
   }, [
     animatedValue,
@@ -181,7 +185,7 @@ export const AnimatedCounter = ({
             isIncreasing={isIncreasing}
             isNegative={isNegative}
             isDecreasing={isDecreasing}
-            debug={index === numArray.length - 1} // just for console logs (logging last column)
+            debug={index === numArray.length - 1} // just for debugging - console logs (logging last column)
             height={height}
             valueRoundedToPlace={valueRoundedToPlace}
           />
