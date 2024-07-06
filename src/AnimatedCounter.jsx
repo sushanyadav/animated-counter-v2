@@ -39,6 +39,8 @@ const Digit = ({
   const [scope, animate] = useAnimate();
 
   let animatedValue = useSpring(digit, {
+    // stiffness: 250,
+    // damping: 300,
     stiffness: 200,
     damping: 30,
   });
@@ -59,15 +61,14 @@ const Digit = ({
         duration: 0.6,
       }
     );
-
-    // find a way to remove inital animation on window load
   }, [animate, digit]);
 
   useEffect(() => {
     if (isTyping) return;
 
+    console.log("here", digit);
+
     animatedValue.set(digit);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [animatedValue, digit, isTyping]);
 
   useEffect(() => {
@@ -75,16 +76,15 @@ const Digit = ({
     const prev = Math.round(_prev);
     const diff = digit - prev;
 
-    const increasingVal = diff * -1 - 10;
-    const decreasingVal = 10;
+    const increasingVal = digit - 10 - diff;
+    const decreasingVal = digit + 10 - diff;
 
     if (isNegative) {
-      if (diff < 0 && isDecreasing) {
-        animatedValue.jump(increasingVal);
-      }
-
       if (diff > 0 && isIncreasing) {
         animatedValue.jump(decreasingVal);
+      }
+      if (diff < 0 && isDecreasing) {
+        animatedValue.jump(increasingVal);
       }
       return;
     }

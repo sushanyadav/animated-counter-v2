@@ -64,7 +64,9 @@ function App() {
               }}
               onChange={(e) => {
                 setTyping(false);
-                setCount(e.target.value);
+                setCount(
+                  isNaN(e.target.valueAsNumber) ? "" : e.target.valueAsNumber
+                );
               }}
             />
           </label>
