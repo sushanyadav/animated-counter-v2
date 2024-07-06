@@ -32,13 +32,13 @@ const Digit = ({
   isIncreasing,
   isDecreasing,
   debug,
-  isFormatted,
-  valueRoundedToPlace,
+  digit,
   isNegative,
+  isTyping,
 }) => {
   const [scope, animate] = useAnimate();
 
-  let animatedValue = useSpring(valueRoundedToPlace, {
+  let animatedValue = useSpring(digit, {
     stiffness: 200,
     damping: 30,
   });
@@ -61,18 +61,19 @@ const Digit = ({
     );
 
     // find a way to remove inital animation on window load
-  }, [animate, valueRoundedToPlace]);
+  }, [animate, digit]);
 
   useEffect(() => {
-    animatedValue.set(valueRoundedToPlace);
+    if (isTyping) return;
+
+    animatedValue.set(digit);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [animatedValue, valueRoundedToPlace]);
+  }, [animatedValue, digit, isTyping]);
 
   useEffect(() => {
-    if (!isFormatted) return;
     const _prev = animatedValue.getPrevious();
     const prev = Math.round(_prev);
-    const diff = valueRoundedToPlace - prev;
+    const diff = digit - prev;
 
     const increasingVal = diff * -1 - 10;
     const decreasingVal = 10;
@@ -95,15 +96,7 @@ const Digit = ({
     if (diff > 0 && isDecreasing) {
       animatedValue.jump(decreasingVal);
     }
-  }, [
-    animatedValue,
-    debug,
-    isFormatted,
-    isDecreasing,
-    isIncreasing,
-    isNegative,
-    valueRoundedToPlace,
-  ]);
+  }, [animatedValue, debug, isDecreasing, isIncreasing, isNegative, digit]);
 
   return (
     <div
@@ -123,6 +116,7 @@ export const AnimatedCounter = ({
   number,
   fontSize = 16,
   padding = 12,
+  isTyping,
 }) => {
   const prevNum = usePrevious(number);
 
@@ -170,24 +164,16 @@ export const AnimatedCounter = ({
 
         const digit = +_digit;
 
-        const place = isFormatted
-          ? 1
-          : Math.pow(10, numArray.length - index - 1);
-
-        const valueRoundedToPlace = isFormatted
-          ? digit
-          : Math.floor(positiveNumber / place);
-
         return (
           <Digit
             key={index}
-            isFormatted={isFormatted}
             isIncreasing={isIncreasing}
             isNegative={isNegative}
             isDecreasing={isDecreasing}
             debug={index === numArray.length - 1} // just for debugging - console logs (logging last column)
             height={height}
-            valueRoundedToPlace={valueRoundedToPlace}
+            digit={digit}
+            isTyping={isTyping}
           />
         );
       })}

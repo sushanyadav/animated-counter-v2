@@ -1,11 +1,27 @@
 import "./App.css";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AnimatedCounter } from "./AnimatedCounter";
 
 function App() {
   const [count, setCount] = useState(4291);
   const [isFormatted, setFormatted] = useState(true);
+  const [isTyping, setTyping] = useState(false);
+
+  useEffect(() => {
+    const changeVal = (e) => {
+      if (e.deltaY > 0) {
+        setCount((prev) => Number(prev) - 1);
+      } else {
+        setCount((prev) => Number(prev) + 1);
+      }
+    };
+    window.addEventListener("wheel", changeVal);
+
+    return () => {
+      window.removeEventListener("wheel", changeVal);
+    };
+  }, []);
 
   return (
     <>
@@ -16,6 +32,7 @@ function App() {
               isFormatted={isFormatted}
               number={count}
               fontSize={72}
+              isTyping={isTyping}
             />
           </div>
         </div>
@@ -39,11 +56,16 @@ function App() {
                 const backSpace = evt.key === "Backspace";
                 const isArrowKey = evt.key.includes("Arrow");
 
+                setTyping(true);
+
                 if (!isNumber && !isMetaKey && !isArrowKey && !backSpace) {
                   evt.preventDefault();
                 }
               }}
-              onChange={(e) => setCount(e.target.value)}
+              onChange={(e) => {
+                setTyping(false);
+                setCount(e.target.value);
+              }}
             />
           </label>
         </div>
@@ -95,9 +117,9 @@ function App() {
           </button>
           <button
             className="border-b border-gray-300"
-            onClick={() => setCount((prev) => Number(prev) - 321)}
+            onClick={() => setCount((prev) => Number(prev) - 326)}
           >
-            Decrease 321
+            Decrease 326
           </button>
         </div>
       </div>
